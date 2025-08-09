@@ -8,39 +8,76 @@
     <link rel="icon" type="image/png" href="cursor.gif">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            cursor: none;
+        }
 
         html, body {
             height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            cursor: url("public/cursor.gif") 8 8, auto;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0a0a0a;
+            color: #f0f0f0;
+            overflow-x: hidden;
         }
 
-        video#background {
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            z-index: -1;
-            max-height: 100vh;
+            pointer-events: none;
+            mix-blend-mode: difference;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.2s ease;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(226, 53, 53, 0.7);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s ease, width 0.2s ease, height 0.2s ease;
+        }
+
+        /* Animated Background Particles */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -2;
+            background-color: #0a0a0a;
         }
 
         .overlay {
             position: fixed;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 0;
+            width: 100%; 
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(20, 20, 20, 0.5) 100%);
+            z-index: -1;
         }
 
         .content {
-            position: absolute;
-            inset: 0;
+            position: relative;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -48,128 +85,384 @@
             text-align: center;
             color: white;
             z-index: 1;
-            padding: 20px;
-            max-width: 90%;
-            margin: auto;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Avatar with animated gradient border */
+        .avatar-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin-bottom: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff4d4d, #e23535, #ff4d4d);
+            background-size: 200% 200%;
+            animation: gradient 3s ease infinite;
+            padding: 5px;
+            box-shadow: 0 0 25px rgba(226, 53, 53, 0.5);
+            transition: all 0.5s ease;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .avatar {
-            width: 150px;
-            height: 150px;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 25px;
-            box-shadow: 0 0 15px rgba(226, 53, 53, 0.7);
+            transition: transform 0.5s ease, filter 0.5s ease;
         }
 
+        .avatar-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(226, 53, 53, 0.7);
+        }
+
+        .avatar-container:hover .avatar {
+            transform: scale(0.95);
+            filter: brightness(1.1);
+        }
+
+        /* Typing effect for title */
         h1 {
-            font-family: 'DM Serif Text', serif;
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            letter-spacing: 1.5px;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+            font-family: 'Pinyon Script', cursive;
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 8px rgba(226, 53, 53, 0.5);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 2s steps(20, end);
         }
 
+        /* Gradient text for citation */
         p {
-            font-family: 'DM Serif Text', serif;
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            line-height: 1.6;
             letter-spacing: 1px;
-            text-shadow: 2px 2px 5px rgba(226, 53, 53, 0.7);
+            background: linear-gradient(45deg, #ff4d4d, #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards 1s;
         }
 
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Social Icons - Black with hover effects */
         .socials {
-            margin-top: 20px;
+            margin-top: 40px;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 25px;
         }
 
         .socials a {
-            color: white;
-            font-size: 1.8rem;
-            display: inline-block;
-            transition: transform 0.3s ease, color 0.3s ease;
+            color: #0a0a0a;
+            background: rgba(255, 255, 255, 0.9);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .socials a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(226, 53, 53, 0.4), transparent);
+            transition: 0.5s;
         }
 
         .socials a:hover {
             transform: translateY(-8px) scale(1.1);
-            color: #ff4d4d;
+            box-shadow: 0 10px 20px rgba(226, 53, 53, 0.3);
+            color: #e23535;
         }
 
-        .intro {
+        .socials a:hover::before {
+            left: 100%;
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: black;
-            color: white;
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #f0f0f0;
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'DM Serif Text', serif;
-            z-index: 2000;
-            transition: opacity 1s ease, visibility 1s ease;
-        }
-
-        .intro-text {
-            font-size: 1.8rem;
             cursor: pointer;
-            animation: pulse 1.5s infinite;
-            text-align: center;
-            padding: 0 20px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
-        .intro.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        #sound-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
+        .dark-mode-toggle:hover {
             background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            font-size: 1.3rem;
-            padding: 12px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 1001;
-            transition: background 0.3s ease, transform 0.3s ease;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        }
-
-        #sound-toggle:hover {
-            background: rgba(255, 255, 255, 0.4);
             transform: scale(1.1);
         }
 
-        @media (max-width: 768px) {
-            html, body {
-                overflow: auto;
-            }
+        /* Sound Toggle */
+        #sound-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #f0f0f0;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
 
+        #sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* Skills Section with Animated Progress Bars */
+        .skills-section {
+            width: 100%;
+            max-width: 800px;
+            margin: 60px auto 0;
+            padding: 30px;
+            background: rgba(20, 20, 20, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .skills-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .skills-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #f0f0f0;
+            text-align: center;
+        }
+
+        .skill {
+            margin-bottom: 20px;
+        }
+
+        .skill-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .skill-name {
+            font-weight: 500;
+        }
+
+        .skill-percent {
+            color: #e23535;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #e23535, #ff4d4d);
+            border-radius: 5px;
+            width: 0;
+            transition: width 1.5s ease-out;
+        }
+
+        /* Console Effect */
+        .console-container {
+            position: fixed;
+            bottom: -300px;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.9);
+            border-top: 1px solid #e23535;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            transition: bottom 0.5s ease;
+            z-index: 100;
+        }
+
+        .console-container.visible {
+            bottom: 0;
+        }
+
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #e23535;
+        }
+
+        .console-close {
+            cursor: pointer;
+        }
+
+        .console-content {
+            height: 200px;
+            overflow-y: auto;
+            color: #f0f0f0;
+        }
+
+        .console-input {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .console-prompt {
+            color: #e23535;
+            margin-right: 10px;
+        }
+
+        .console-input-field {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: #f0f0f0;
+            font-family: 'Courier New', monospace;
+            outline: none;
+        }
+
+        /* Page Transition */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .transition-content {
+            color: #f0f0f0;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        /* Liquid Hover Effect for Future Buttons */
+        .liquid-btn {
+            position: relative;
+            padding: 15px 30px;
+            background: transparent;
+            color: #f0f0f0;
+            border: 2px solid #e23535;
+            border-radius: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .liquid-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #e23535;
+            z-index: -1;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s ease;
+        }
+
+        .liquid-btn:hover {
+            color: #0a0a0a;
+        }
+
+        .liquid-btn:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
             h1 {
-                font-size: 8vw;
+                font-size: 3rem;
             }
 
             p {
-                font-size: 4.5vw;
+                font-size: 1.5rem;
             }
 
-            .avatar {
-                width: 120px;
-                height: 120px;
+            .avatar-container {
+                width: 150px;
+                height: 150px;
             }
 
             .socials {
@@ -177,40 +470,73 @@
             }
 
             .socials a {
-                font-size: 1.5rem;
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
             }
 
-            .intro-text {
-                font-size: 5vw;
+            .skills-section {
+                padding: 20px;
+                margin-top: 40px;
+            }
+
+            .skills-section h2 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            p {
+                font-size: 1.3rem;
+            }
+
+            .avatar-container {
+                width: 120px;
+                height: 120px;
+            }
+
+            .dark-mode-toggle, #sound-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+
+            .dark-mode-toggle {
+                top: 20px;
+                right: 20px;
             }
 
             #sound-toggle {
-                bottom: 15px;
-                right: 15px;
-                padding: 10px;
-                font-size: 1.1rem;
+                bottom: 20px;
+                right: 20px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
 
-    <video id="background" autoplay muted loop playsinline>
-        <source src="background.mp4" type="video/mp4">
-        Your browser does not support HTML5 video.
-    </video>
-
-    <audio id="audio" loop>
-        <source src="audio.mp3" type="audio/mp3">
-        Your browser does not support the audio element.
-    </audio>
+    <!-- Animated Background Particles -->
+    <div id="particles-js"></div>
 
     <div class="overlay"></div>
 
     <div class="content" id="main-content">
-        <img src="avatar.png" alt="Profile Avatar" class="avatar" />
-        <h1 id="main-title"></h1>
-        <p id="citation-text"></p>
+        <!-- Avatar with animated border -->
+        <div class="avatar-container">
+            <img src="avatar.png" alt="Profile Avatar" class="avatar" />
+        </div>
+        
+        <h1 id="main-title">Alma Bot</h1>
+        <p id="citation-text">Am not a Weak.</p>
+        
+        <!-- Social Icons -->
         <div class="socials">
             <a href="#" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
                 <i class="fab fa-github"></i>
@@ -228,66 +554,298 @@
                 <i class="fab fa-telegram"></i>
             </a>
         </div>
+
+        <!-- Skills Section -->
+        <div class="skills-section" id="skills">
+            <h2>My Skills</h2>
+            <div class="skill">
+                <div class="skill-info">
+                    <span class="skill-name">AI Development</span>
+                    <span class="skill-percent">90%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" data-width="90"></div>
+                </div>
+            </div>
+            <div class="skill">
+                <div class="skill-info">
+                    <span class="skill-name">Machine Learning</span>
+                    <span class="skill-percent">85%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" data-width="85"></div>
+                </div>
+            </div>
+            <div class="skill">
+                <div class="skill-info">
+                    <span class="skill-name">Natural Language Processing</span>
+                    <span class="skill-percent">80%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" data-width="80"></div>
+                </div>
+            </div>
+            <div class="skill">
+                <div class="skill-info">
+                    <span class="skill-name">Python</span>
+                    <span class="skill-percent">95%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" data-width="95"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="intro" id="intro">
-        <div class="intro-text">Click to enter</div>
-    </div>
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+    </button>
 
+    <!-- Sound Toggle -->
     <button id="sound-toggle" aria-label="Toggle sound">
         <i class="fas fa-volume-up"></i>
     </button>
 
+    <!-- Console Effect -->
+    <div class="console-container" id="console">
+        <div class="console-header">
+            <span>Terminal</span>
+            <span class="console-close" id="consoleClose">×</span>
+        </div>
+        <div class="console-content" id="consoleContent">
+            > System initialized...<br>
+            > Loading Alma Bot interface...<br>
+            > Type 'help' for available commands
+        </div>
+        <div class="console-input">
+            <span class="console-prompt">></span>
+            <input type="text" class="console-input-field" id="consoleInput" autocomplete="off">
+        </div>
+    </button>
+
+    <!-- Page Transition -->
+    <div class="page-transition" id="pageTransition">
+        <div class="transition-content">
+            <div class="loader"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        const audio = document.getElementById("audio");
-        const toggleBtn = document.getElementById("sound-toggle");
-        const icon = toggleBtn.querySelector("i");
-        const intro = document.getElementById("intro");
-        const video = document.getElementById("background");
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
 
-        const titleElement = document.getElementById("main-title");
-        const citationElement = document.getElementById("citation-text");
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                cursorFollower.style.left = e.clientX + 'px';
+                cursorFollower.style.top = e.clientY + 'px';
+            }, 100);
+        });
 
-        const originalTitleText = "Alma Bot";
-        const originalCitationText = "Am not a Weak.";
-
-        let isPlaying = false;
-
-        function playMedia(mediaElement) {
-            mediaElement.play().catch(err => {
-                console.warn(`Playback blocked:`, err);
+        document.querySelectorAll('a, button, .avatar-container').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                cursorFollower.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                cursorFollower.style.backgroundColor = 'rgba(226, 53, 53, 0.3)';
             });
-        }
+            
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursorFollower.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursorFollower.style.backgroundColor = 'transparent';
+            });
+        });
 
-        toggleBtn.addEventListener("click", () => {
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const icon = darkModeToggle.querySelector('i');
+        
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            
+            if (document.body.classList.contains('light-mode')) {
+                icon.className = 'fas fa-sun';
+                document.body.style.backgroundColor = '#f0f0f0';
+                document.body.style.color = '#0a0a0a';
+            } else {
+                icon.className = 'fas fa-moon';
+                document.body.style.backgroundColor = '#0a0a0a';
+                document.body.style.color = '#f0f0f0';
+            }
+        });
+
+        // Sound Toggle
+        const audio = new Audio('audio.mp3');
+        audio.loop = true;
+        audio.volume = 0.05;
+        
+        const soundToggle = document.getElementById('sound-toggle');
+        const soundIcon = soundToggle.querySelector('i');
+        
+        let isPlaying = false;
+        
+        soundToggle.addEventListener('click', () => {
             if (isPlaying) {
                 audio.pause();
-                icon.className = "fas fa-volume-mute";
+                soundIcon.className = 'fas fa-volume-mute';
             } else {
-                playMedia(audio);
-                icon.className = "fas fa-volume-up";
+                audio.play();
+                soundIcon.className = 'fas fa-volume-up';
             }
             isPlaying = !isPlaying;
         });
 
-        intro.addEventListener("click", () => {
-            intro.classList.add("fade-out");
+        // Animate Progress Bars
+        function animateProgressBars() {
+            document.querySelectorAll('.progress').forEach(bar => {
+                const width = bar.getAttribute('data-width');
+                bar.style.width = width + '%';
+            });
+        }
 
-            audio.volume = 0.05;
-            playMedia(audio);
-            playMedia(video);
+        // Scroll-Activated Animations
+        function checkScroll() {
+            const skillsSection = document.getElementById('skills');
+            const sectionPosition = skillsSection.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
 
-            isPlaying = true;
-            icon.className = "fas fa-volume-up";
+            if (sectionPosition < screenPosition) {
+                skillsSection.classList.add('visible');
+                animateProgressBars();
+            }
+        }
 
-            titleElement.textContent = originalTitleText;
-            citationElement.textContent = originalCitationText;
+        window.addEventListener('scroll', checkScroll);
+        window.addEventListener('load', checkScroll);
 
-            // Lance l'animation du titre dans l'onglet
-            animateTitle();
+        // Console Effect
+        const consoleElement = document.getElementById('console');
+        const consoleContent = document.getElementById('consoleContent');
+        const consoleInput = document.getElementById('consoleInput');
+        const consoleClose = document.getElementById('consoleClose');
+
+        // Toggle console with ~ key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '~') {
+                consoleElement.classList.toggle('visible');
+                if (consoleElement.classList.contains('visible')) {
+                    consoleInput.focus();
+                }
+            }
         });
 
-        // Animation du titre dans l'onglet
+        consoleClose.addEventListener('click', () => {
+            consoleElement.classList.remove('visible');
+        });
+
+        consoleInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const command = consoleInput.value.trim();
+                consoleContent.innerHTML += `<br>> ${command}<br>`;
+                
+                // Process command
+                if (command.toLowerCase() === 'help') {
+                    consoleContent.innerHTML += 'Available commands:<br>';
+                    consoleContent.innerHTML += '- about: Learn about Alma Bot<br>';
+                    consoleContent.innerHTML += '- social: Show social links<br>';
+                    consoleContent.innerHTML += '- clear: Clear console<br>';
+                } else if (command.toLowerCase() === 'about') {
+                    consoleContent.innerHTML += 'Alma Bot is an advanced AI assistant with cutting-edge capabilities.<br>';
+                } else if (command.toLowerCase() === 'social') {
+                    consoleContent.innerHTML += 'Social links:<br>';
+                    consoleContent.innerHTML += '- YouTube: https://www.youtube.com/@almaabott<br>';
+                    consoleContent.innerHTML += '- Telegram: https://t.me/likeFFrobot<br>';
+                } else if (command.toLowerCase() === 'clear') {
+                    consoleContent.innerHTML = '> Console cleared<br>';
+                } else {
+                    consoleContent.innerHTML += `> Unknown command: "${command}"<br>`;
+                }
+                
+                consoleInput.value = '';
+                consoleContent.scrollTop = consoleContent.scrollHeight;
+            }
+        });
+
+        // Initialize Particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#e23535" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: "#e23535", opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 2, direction: "none", random: true, straight: false, out_mode: "out" }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" }
+                }
+            }
+        });
+
+        // Speech Recognition
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            
+            recognition.onresult = (event) => {
+                const speechResult = event.results[0][0].transcript.toLowerCase();
+                consoleContent.innerHTML += `<br>> Voice command: "${speechResult}"<br>`;
+                
+                if (speechResult.includes('open console')) {
+                    consoleElement.classList.add('visible');
+                    consoleInput.focus();
+                } else if (speechResult.includes('close console')) {
+                    consoleElement.classList.remove('visible');
+                } else if (speechResult.includes('play music')) {
+                    audio.play();
+                    isPlaying = true;
+                    soundIcon.className = 'fas fa-volume-up';
+                } else if (speechResult.includes('stop music')) {
+                    audio.pause();
+                    isPlaying = false;
+                    soundIcon.className = 'fas fa-volume-mute';
+                }
+                
+                consoleContent.scrollTop = consoleContent.scrollHeight;
+            };
+            
+            // Add voice command button if supported
+            const voiceBtn = document.createElement('button');
+            voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+            voiceBtn.className = 'dark-mode-toggle';
+            voiceBtn.style.bottom = '90px';
+            voiceBtn.style.right = '30px';
+            voiceBtn.title = 'Voice Command';
+            voiceBtn.addEventListener('click', () => {
+                recognition.start();
+                consoleContent.innerHTML += '<br>> Listening...<br>';
+                consoleContent.scrollTop = consoleContent.scrollHeight;
+            });
+            document.body.appendChild(voiceBtn);
+        }
+
+        // Page Load Animation
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('pageTransition').classList.add('active');
+                setTimeout(() => {
+                    document.getElementById('pageTransition').classList.remove('active');
+                }, 1000);
+            }, 500);
+        });
+
+        // Animate title in tab
         const titleFrames = [
             "A", "Al", "Alm", "Alma", "Alma ", "Alma B",
             "Alma Bo", "Alma Bot"
@@ -297,8 +855,10 @@
         function animateTitle() {
             document.title = titleFrames[titleIndex];
             titleIndex = (titleIndex + 1) % titleFrames.length;
-            setTimeout(animateTitle, 200); // Vitesse d'animation
+            setTimeout(animateTitle, 200);
         }
+
+        animateTitle();
     </script>
 </body>
 </html>
