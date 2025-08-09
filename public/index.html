@@ -3,49 +3,39 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Alma Bot</title>
+    <title>Alma</title>
+
     <link rel="icon" type="image/png" href="cursor.gif">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Amiri:wght@400;700&family=Great+Vibes&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: all 0.4s ease;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html, body {
             height: 100%;
-            font-family: 'Dancing Script', 'Amiri', cursive;
-            background: #000;
-            color: #fff;
-            overflow: hidden;
-            cursor: url("cursor.gif") 8 8, auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: url("public/cursor.gif") 8 8, auto;
         }
 
         video#background {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             object-fit: cover;
-            z-index: -2;
-            pointer-events: none;
-            opacity: 1;
-            visibility: visible;
+            z-index: -1;
+            max-height: 100vh;
         }
 
         .overlay {
             position: fixed;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(20,20,40,0.4) 0%, rgba(0,0,0,0.8) 90%);
-            backdrop-filter: blur(8px);
-            z-index: -1;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
         }
 
         .content {
@@ -56,493 +46,259 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #f0f0ff;
+            color: white;
             z-index: 1;
-            padding: 30px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 1.5s forwards;
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            padding: 20px;
+            max-width: 90%;
+            margin: auto;
         }
 
         .avatar {
-            width: 160px;
-            height: 160px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 28px;
-            border: 4px solid #e23535;
-            box-shadow: 0 0 25px rgba(226, 53, 53, 0.6),
-                        0 0 50px rgba(226, 53, 53, 0.3);
-            transition: transform 0.4s ease;
-        }
-
-        .avatar:hover {
-            transform: scale(1.08) rotate(3deg);
+            margin-bottom: 25px;
+            box-shadow: 0 0 15px rgba(226, 53, 53, 0.7);
         }
 
         h1 {
-            font-family: 'Great Vibes', 'Dancing Script', cursive;
-            font-size: 5rem;
-            margin-bottom: 12px;
-            letter-spacing: 2px;
-            color: #fff;
-            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8),
-                         0 0 15px rgba(226, 53, 53, 0.5);
-            line-height: 1.1;
+            font-family: 'DM Serif Text', serif;
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            letter-spacing: 1.5px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
         }
 
         p {
-            font-family: 'Dancing Script', 'Amiri', cursive;
-            font-size: 2.2rem;
-            margin-bottom: 35px;
-            line-height: 1.6;
+            font-family: 'DM Serif Text', serif;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
             letter-spacing: 1px;
-            max-width: 800px;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+            text-shadow: 2px 2px 5px rgba(226, 53, 53, 0.7);
         }
 
         .socials {
-            margin-top: 25px;
+            margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 28px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .socials a {
-            color: #000;
-            font-size: 2rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 56px;
-            height: 56px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+            color: white;
+            font-size: 1.8rem;
+            display: inline-block;
+            transition: transform 0.3s ease, color 0.3s ease;
         }
 
         .socials a:hover {
-            transform: translateY(-6px) scale(1.15);
-            background: #000;
-            color: #fff;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+            transform: translateY(-8px) scale(1.1);
+            color: #ff4d4d;
+        }
+
+        .intro {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'DM Serif Text', serif;
+            z-index: 2000;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .intro-text {
+            font-size: 1.8rem;
+            cursor: pointer;
+            animation: pulse 1.5s infinite;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .intro.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
         }
 
         #sound-toggle {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: rgba(30, 30, 50, 0.6);
-            border: 1px solid #555;
-            color: #fff;
-            font-size: 1.4rem;
-            padding: 14px;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            padding: 12px;
             border-radius: 50%;
             cursor: pointer;
             z-index: 1001;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
         #sound-toggle:hover {
-            background: rgba(60, 60, 90, 0.8);
-            transform: scale(1.12);
-            color: #ffd7d7;
-        }
-
-        .error-message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 0, 0, 0.8);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
-            z-index: 1000;
-            display: none;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
         }
 
         @media (max-width: 768px) {
+            html, body {
+                overflow: auto;
+            }
+
             h1 {
                 font-size: 8vw;
             }
 
             p {
-                font-size: 5vw;
+                font-size: 4.5vw;
             }
 
             .avatar {
-                width: 130px;
-                height: 130px;
+                width: 120px;
+                height: 120px;
+            }
+
+            .socials {
+                gap: 15px;
             }
 
             .socials a {
-                font-size: 1.6rem;
-                width: 50px;
-                height: 50px;
-                color: #000;
-                background: #fff;
+                font-size: 1.5rem;
             }
 
-            .socials a:hover {
-                color: #fff;
-                background: #000;
+            .intro-text {
+                font-size: 5vw;
             }
 
             #sound-toggle {
-                bottom: 16px;
-                right: 16px;
-                padding: 12px;
-                font-size: 1.2rem;
+                bottom: 15px;
+                right: 15px;
+                padding: 10px;
+                font-size: 1.1rem;
             }
-
-            .content {
-                padding: 20px;
-            }
-        }
-
-        .video-fallback {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            z-index: -3;
         }
     </style>
 </head>
 <body>
-    <div class="error-message" id="error-message"></div>
 
-    <!-- Background Video with dynamic path resolution -->
-    <video id="background" autoplay muted loop playsinline preload="auto">
-        <!-- Sources will be set dynamically -->
+    <video id="background" autoplay muted loop playsinline>
+        <source src="background.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
     </video>
 
-    <!-- Background Audio with dynamic path resolution -->
-    <audio id="audio" loop preload="auto">
-        <!-- Source will be set dynamically -->
+    <audio id="audio" loop>
+        <source src="audio.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
     </audio>
 
-    <!-- Animated fallback background -->
-    <div class="video-fallback" id="video-fallback">
-        <div style="text-align: center;">
-            <div style="font-size: 3rem; margin-bottom: 20px;">✨</div>
-            <p>Loading your experience...</p>
-        </div>
-    </div>
-
-    <!-- Glassmorphic Overlay -->
     <div class="overlay"></div>
 
-    <!-- Main Content -->
     <div class="content" id="main-content">
-        <img src="" alt="Alma's Avatar" class="avatar" id="avatar" />
-        <h1>Alma Bot</h1>
-        <p>Am not a Weak.</p>
+        <img src="avatar.png" alt="Profile Avatar" class="avatar" />
+        <h1 id="main-title"></h1>
+        <p id="citation-text"></p>
         <div class="socials">
-            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
                 <i class="fab fa-github"></i>
             </a>
-            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok Profile">
                 <i class="fab fa-tiktok"></i>
             </a>
-            <a href="https://www.youtube.com/@almaabott" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <a href="https://www.youtube.com/@almaabott" target="_blank" rel="noopener noreferrer" aria-label="YouTube Channel">
                 <i class="fab fa-youtube"></i>
             </a>
-            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Discord Server">
                 <i class="fab fa-discord"></i>
             </a>
-            <a href="https://t.me/likeFFrobot" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+            <a href="https://t.me/likeFFrobot" target="_blank" rel="noopener noreferrer" aria-label="Telegram Channel">
                 <i class="fab fa-telegram"></i>
             </a>
         </div>
     </div>
 
-    <!-- Sound Toggle Button -->
+    <div class="intro" id="intro">
+        <div class="intro-text">Click to enter</div>
+    </div>
+
     <button id="sound-toggle" aria-label="Toggle sound">
-        <i class="fas fa-volume-mute"></i>
+        <i class="fas fa-volume-up"></i>
     </button>
 
     <script>
         const audio = document.getElementById("audio");
         const toggleBtn = document.getElementById("sound-toggle");
         const icon = toggleBtn.querySelector("i");
+        const intro = document.getElementById("intro");
         const video = document.getElementById("background");
-        const avatar = document.getElementById("avatar");
-        const errorMessage = document.getElementById("error-message");
-        const videoFallback = document.getElementById("video-fallback");
+
+        const titleElement = document.getElementById("main-title");
+        const citationElement = document.getElementById("citation-text");
+
+        const originalTitleText = "Alma Bot";
+        const originalCitationText = "Am not a Weak.";
+
         let isPlaying = false;
 
-        // Function to show error message
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
-            setTimeout(() => {
-                errorMessage.style.display = 'none';
-            }, 5000);
+        function playMedia(mediaElement) {
+            mediaElement.play().catch(err => {
+                console.warn(`Playback blocked:`, err);
+            });
         }
 
-        // Function to get correct base path for GitHub Pages or local
-        function getBasePath() {
-            const hostname = window.location.hostname;
-            const pathname = window.location.pathname;
-            
-            // GitHub Pages detection
-            if (hostname.includes('github.io')) {
-                const pathParts = pathname.split('/').filter(part => part);
-                if (pathParts.length > 0) {
-                    return `/${pathParts[0]}/`;
-                }
-            }
-            
-            // For local development or root deployment
-            return './';
-        }
-
-        // Function to test if file exists
-        async function fileExists(url) {
-            try {
-                const response = await fetch(url, { method: 'HEAD' });
-                return response.ok;
-            } catch (error) {
-                return false;
-            }
-        }
-
-        // Function to find available media files
-        async function findMediaFiles() {
-            const basePath = getBasePath();
-            const mediaFiles = {
-                video: null,
-                audio: null,
-                avatar: null
-            };
-
-            // Possible file locations and names
-            const videoPaths = [
-                `${basePath}background.mp4`,
-                `${basePath}public/background.mp4`,
-                `${basePath}assets/background.mp4`,
-                `${basePath}media/background.mp4`
-            ];
-
-            const audioPaths = [
-                `${basePath}audio.mp3`,
-                `${basePath}public/audio.mp3`,
-                `${basePath}assets/audio.mp3`,
-                `${basePath}media/audio.mp3`
-            ];
-
-            const avatarPaths = [
-                `${basePath}avatar.png`,
-                `${basePath}public/avatar.png`,
-                `${basePath}assets/avatar.png`,
-                `${basePath}images/avatar.png`
-            ];
-
-            // Test video files
-            for (const path of videoPaths) {
-                if (await fileExists(path)) {
-                    mediaFiles.video = path;
-                    break;
-                }
-            }
-
-            // Test audio files
-            for (const path of audioPaths) {
-                if (await fileExists(path)) {
-                    mediaFiles.audio = path;
-                    break;
-                }
-            }
-
-            // Test avatar files
-            for (const path of avatarPaths) {
-                if (await fileExists(path)) {
-                    mediaFiles.avatar = path;
-                    break;
-                }
-            }
-
-            return mediaFiles;
-        }
-
-        // Function to setup media sources
-        async function setupMediaSources() {
-            const mediaFiles = await findMediaFiles();
-
-            // Setup video
-            if (mediaFiles.video) {
-                const videoSource = document.createElement('source');
-                videoSource.src = mediaFiles.video;
-                videoSource.type = 'video/mp4';
-                video.appendChild(videoSource);
-                console.log('Video source set:', mediaFiles.video);
-            } else {
-                console.warn('No video file found');
-                videoFallback.style.display = 'flex';
-                showError('Video file not found. Please ensure background.mp4 is in the root directory.');
-            }
-
-            // Setup audio
-            if (mediaFiles.audio) {
-                const audioSource = document.createElement('source');
-                audioSource.src = mediaFiles.audio;
-                audioSource.type = 'audio/mpeg';
-                audio.appendChild(audioSource);
-                console.log('Audio source set:', mediaFiles.audio);
-            } else {
-                console.warn('No audio file found');
-                showError('Audio file not found. Please ensure audio.mp3 is in the root directory.');
-            }
-
-            // Setup avatar
-            if (mediaFiles.avatar) {
-                avatar.src = mediaFiles.avatar;
-                console.log('Avatar source set:', mediaFiles.avatar);
-            } else {
-                // Use a default avatar or hide the image
-                avatar.style.display = 'none';
-                console.warn('No avatar file found');
-            }
-
-            return mediaFiles;
-        }
-
-        async function playMedia() {
-            const mediaFiles = await setupMediaSources();
-            
-            // Play video if available
-            if (mediaFiles.video) {
-                try {
-                    await video.play();
-                    console.log('Video playback started');
-                    videoFallback.style.display = 'none';
-                } catch (videoErr) {
-                    console.warn('Video play failed:', videoErr);
-                    videoFallback.style.display = 'flex';
-                }
-            }
-
-            // Play audio if available
-            if (mediaFiles.audio) {
-                try {
-                    await audio.play();
-                    console.log('Audio playback started');
-                    icon.className = "fas fa-volume-up";
-                    isPlaying = true;
-                } catch (audioErr) {
-                    console.warn('Audio autoplay blocked:', audioErr);
-                    icon.className = "fas fa-volume-mute";
-                    isPlaying = false;
-                    // Try to play on user interaction
-                    document.body.addEventListener('click', unmuteOnInteraction, { once: true });
-                }
-            }
-        }
-
-        function unmuteOnInteraction() {
-            if (audio.src) {
-                audio.play()
-                    .then(() => {
-                        console.log('Audio started after user interaction');
-                        icon.className = "fas fa-volume-up";
-                        isPlaying = true;
-                    })
-                    .catch(err => console.error('Audio play failed after click:', err));
-            }
-        }
-
-        toggleBtn.addEventListener('click', () => {
-            if (!audio.src) {
-                showError('No audio file available');
-                return;
-            }
-
+        toggleBtn.addEventListener("click", () => {
             if (isPlaying) {
                 audio.pause();
                 icon.className = "fas fa-volume-mute";
             } else {
-                audio.play()
-                    .then(() => {
-                        icon.className = "fas fa-volume-up";
-                    })
-                    .catch(err => {
-                        console.error('Audio play failed:', err);
-                        icon.className = "fas fa-volume-mute";
-                        showError('Failed to play audio');
-                    });
+                playMedia(audio);
+                icon.className = "fas fa-volume-up";
             }
             isPlaying = !isPlaying;
         });
 
-        // Enhanced error handling for video
-        video.addEventListener('error', (e) => {
-            console.error('Video error:', e);
-            videoFallback.style.display = 'flex';
-        });
+        intro.addEventListener("click", () => {
+            intro.classList.add("fade-out");
 
-        video.addEventListener('loadstart', () => {
-            console.log('Video loading started');
-        });
+            audio.volume = 0.05;
+            playMedia(audio);
+            playMedia(video);
 
-        video.addEventListener('canplay', () => {
-            console.log('Video can start playing');
-            videoFallback.style.display = 'none';
-        });
+            isPlaying = true;
+            icon.className = "fas fa-volume-up";
 
-        // Enhanced error handling for audio
-        audio.addEventListener('error', (e) => {
-            console.error('Audio error:', e);
-            icon.className = "fas fa-volume-mute";
-            isPlaying = false;
-        });
+            titleElement.textContent = originalTitleText;
+            citationElement.textContent = originalCitationText;
 
-        // Initialize everything when page loads
-        window.addEventListener('load', async () => {
-            console.log('Page loaded, initializing media...');
-            await playMedia();
-
-            // Animated title
-            let titleIndex = 0;
-            const titleFrames = ["A", "Al", "Alm", "Alma", "Alma ", "Alma B", "Alma Bo", "Alma Bot"];
-            const animateTitle = () => {
-                document.title = titleFrames[titleIndex];
-                titleIndex = (titleIndex + 1) % titleFrames.length;
-                setTimeout(animateTitle, 180);
-            };
+            // Lance l'animation du titre dans l'onglet
             animateTitle();
         });
 
-        // Health check for video playback
-        setInterval(() => {
-            if (video.src && video.readyState > 0 && video.paused && !video.ended) {
-                console.warn('Video paused unexpectedly, attempting to restart');
-                video.play().catch(err => console.warn('Video restart failed:', err));
-            }
-        }, 3000);
+        // Animation du titre dans l'onglet
+        const titleFrames = [
+            "A", "Al", "Alm", "Alma", "Alma ", "Alma B",
+            "Alma Bo", "Alma Bot"
+        ];
+        let titleIndex = 0;
 
-        // Debug information
-        console.log('Current location:', window.location);
-        console.log('Base path will be:', getBasePath());
+        function animateTitle() {
+            document.title = titleFrames[titleIndex];
+            titleIndex = (titleIndex + 1) % titleFrames.length;
+            setTimeout(animateTitle, 200); // Vitesse d'animation
+        }
     </script>
 </body>
 </html>
