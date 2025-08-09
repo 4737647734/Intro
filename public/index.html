@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Cursive & Elegant Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Amiri:wght@400;700&family=Great+Vibes&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -31,11 +30,14 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             object-fit: cover;
             z-index: -2;
-            filter: brightness(0.6) blur(2px);
+            pointer-events: none;
+            /* Ensure video loads and plays */
+            opacity: 1;
+            visibility: visible;
         }
 
         .overlay {
@@ -115,14 +117,14 @@
         }
 
         .socials a {
-            color: #ffe0e0;
+            color: #000; /* ✅ Changed icons to BLACK */
             font-size: 2rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             width: 56px;
             height: 56px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 50%;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
@@ -130,9 +132,9 @@
 
         .socials a:hover {
             transform: translateY(-6px) scale(1.15);
-            background: rgba(226, 53, 53, 0.4);
+            background: #000;
             color: #fff;
-            box-shadow: 0 6px 18px rgba(226, 53, 53, 0.5);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
         }
 
         #sound-toggle {
@@ -177,6 +179,13 @@
                 font-size: 1.6rem;
                 width: 50px;
                 height: 50px;
+                color: #000;
+                background: #fff;
+            }
+
+            .socials a:hover {
+                color: #fff;
+                background: #000;
             }
 
             #sound-toggle {
@@ -190,17 +199,30 @@
                 padding: 20px;
             }
         }
+
+        /* Fallback if video fails to load */
+        video::before {
+            content: "Loading background...";
+            color: #aaa;
+            font-family: Arial, sans-serif;
+            font-size: 1rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <body>
     <!-- Background Video -->
-    <video id="background" autoplay muted loop playsinline>
+    <video id="background" autoplay muted loop playsinline preload="auto">
         <source src="background.mp4" type="video/mp4">
-        Your browser does not support HTML5 video.
+        <!-- Fallback -->
+        <img src="fallback.jpg" alt="Background fallback" style="position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;" />
     </video>
 
     <!-- Background Audio -->
-    <audio id="audio" loop>
+    <audio id="audio" loop preload="auto">
         <source src="audio.mp3" type="audio/mp3">
         Your browser does not support the audio element.
     </audio>
@@ -237,7 +259,6 @@
         <i class="fas fa-volume-mute"></i>
     </button>
 
-    <!-- JavaScript -->
     <script>
         const audio = document.getElementById("audio");
         const toggleBtn = document.getElementById("sound-toggle");
@@ -245,20 +266,23 @@
         const video = document.getElementById("background");
         let isPlaying = false;
 
-        // Auto-play media (with user interaction fallback)
+        // Attempt to play video and audio
         function playMedia() {
             Promise.all([
                 video.play(),
-                audio.play()
+                audio.play().catch(() => {
+                    console.warn("Audio autoplay blocked. Will require interaction.");
+                    icon.className = "fas fa-volume-mute";
+                    isPlaying = false;
+                })
             ]).catch(err => {
                 console.warn("Autoplay was prevented:", err);
-                // Allow user to start audio manually
                 document.body.addEventListener("click", unmuteOnInteraction, { once: true });
             });
         }
 
         function unmuteOnInteraction() {
-            audio.play().catch(err => console.error("Audio play failed:", err));
+            audio.play().catch(err => console.error("Audio play failed after click:", err));
             icon.className = "fas fa-volume-up";
             isPlaying = true;
         }
@@ -275,10 +299,11 @@
             isPlaying = !isPlaying;
         });
 
-        // Start on load
+        // On load
         window.addEventListener("load", () => {
             playMedia();
-            // Update document title smoothly
+
+            // Animated title
             let titleIndex = 0;
             const titleFrames = ["A", "Al", "Alm", "Alma", "Alma ", "Alma B", "Alma Bo", "Alma Bot"];
             const animateTitle = () => {
@@ -287,6 +312,12 @@
                 setTimeout(animateTitle, 180);
             };
             animateTitle();
+        });
+
+        // Optional: Log video error for debugging
+        video.addEventListener("error", () => {
+            console.error("Video failed to load:", video.currentSrc);
+            alert("Background video failed to load. Check the file path or format.");
         });
     </script>
 </body>
