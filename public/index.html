@@ -159,6 +159,20 @@
             color: #ffd7d7;
         }
 
+        .error-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+            display: none;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 8vw;
@@ -204,8 +218,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
-            display: flex;
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
+            display: none;
             justify-content: center;
             align-items: center;
             color: #fff;
@@ -215,27 +229,32 @@
     </style>
 </head>
 <body>
-    <!-- Background Video with corrected paths -->
+    <div class="error-message" id="error-message"></div>
+
+    <!-- Background Video with dynamic path resolution -->
     <video id="background" autoplay muted loop playsinline preload="auto">
-        <source src="public/background.mp4" type="video/mp4">
-        <source src="public/background.webm" type="video/webm">
-        <div class="video-fallback">
-            <p>Video failed to load. Using fallback background.</p>
-        </div>
+        <!-- Sources will be set dynamically -->
     </video>
 
-    <!-- Background Audio with corrected path -->
+    <!-- Background Audio with dynamic path resolution -->
     <audio id="audio" loop preload="auto">
-        <source src="public/audio.mp3" type="audio/mp3">
-        Your browser does not support the audio element.
+        <!-- Source will be set dynamically -->
     </audio>
+
+    <!-- Animated fallback background -->
+    <div class="video-fallback" id="video-fallback">
+        <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">✨</div>
+            <p>Loading your experience...</p>
+        </div>
+    </div>
 
     <!-- Glassmorphic Overlay -->
     <div class="overlay"></div>
 
     <!-- Main Content -->
     <div class="content" id="main-content">
-        <img src="public/avatar.png" alt="Alma's Avatar" class="avatar" />
+        <img src="" alt="Alma's Avatar" class="avatar" id="avatar" />
         <h1>Alma Bot</h1>
         <p>Am not a Weak.</p>
         <div class="socials">
@@ -267,94 +286,197 @@
         const toggleBtn = document.getElementById("sound-toggle");
         const icon = toggleBtn.querySelector("i");
         const video = document.getElementById("background");
+        const avatar = document.getElementById("avatar");
+        const errorMessage = document.getElementById("error-message");
+        const videoFallback = document.getElementById("video-fallback");
         let isPlaying = false;
 
-        // Function to get correct base path for GitHub Pages
+        // Function to show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Function to get correct base path for GitHub Pages or local
         function getBasePath() {
-            // Check if we're on GitHub Pages
-            if (window.location.host.includes('github.io')) {
-                const pathParts = window.location.pathname.split('/');
-                // Repository name is the second part of the path
-                const repoName = pathParts[1];
-                return `/${repoName}/public/`;
+            const hostname = window.location.hostname;
+            const pathname = window.location.pathname;
+            
+            // GitHub Pages detection
+            if (hostname.includes('github.io')) {
+                const pathParts = pathname.split('/').filter(part => part);
+                if (pathParts.length > 0) {
+                    return `/${pathParts[0]}/`;
+                }
             }
-            return '/public/';
+            
+            // For local development or root deployment
+            return './';
         }
 
-        // Function to update all media paths
-        function updateMediaPaths() {
+        // Function to test if file exists
+        async function fileExists(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        // Function to find available media files
+        async function findMediaFiles() {
             const basePath = getBasePath();
-            
-            // Update video sources
-            const videoSources = video.querySelectorAll('source');
-            videoSources.forEach(source => {
-                const originalSrc = source.getAttribute('src');
-                if (originalSrc && !originalSrc.startsWith('http')) {
-                    source.src = basePath + originalSrc.split('/').pop();
-                }
-            });
+            const mediaFiles = {
+                video: null,
+                audio: null,
+                avatar: null
+            };
 
-            // Update audio source
-            const audioSource = audio.querySelector('source');
-            if (audioSource) {
-                const originalSrc = audioSource.getAttribute('src');
-                if (originalSrc && !originalSrc.startsWith('http')) {
-                    audioSource.src = basePath + originalSrc.split('/').pop();
+            // Possible file locations and names
+            const videoPaths = [
+                `${basePath}background.mp4`,
+                `${basePath}public/background.mp4`,
+                `${basePath}assets/background.mp4`,
+                `${basePath}media/background.mp4`
+            ];
+
+            const audioPaths = [
+                `${basePath}audio.mp3`,
+                `${basePath}public/audio.mp3`,
+                `${basePath}assets/audio.mp3`,
+                `${basePath}media/audio.mp3`
+            ];
+
+            const avatarPaths = [
+                `${basePath}avatar.png`,
+                `${basePath}public/avatar.png`,
+                `${basePath}assets/avatar.png`,
+                `${basePath}images/avatar.png`
+            ];
+
+            // Test video files
+            for (const path of videoPaths) {
+                if (await fileExists(path)) {
+                    mediaFiles.video = path;
+                    break;
                 }
             }
 
-            // Update avatar image
-            const avatar = document.querySelector('.avatar');
-            if (avatar) {
-                const originalSrc = avatar.getAttribute('src');
-                if (originalSrc && !originalSrc.startsWith('http')) {
-                    avatar.src = basePath + originalSrc.split('/').pop();
+            // Test audio files
+            for (const path of audioPaths) {
+                if (await fileExists(path)) {
+                    mediaFiles.audio = path;
+                    break;
                 }
             }
+
+            // Test avatar files
+            for (const path of avatarPaths) {
+                if (await fileExists(path)) {
+                    mediaFiles.avatar = path;
+                    break;
+                }
+            }
+
+            return mediaFiles;
         }
 
-        function playMedia() {
-            updateMediaPaths();
-            
-            video.play()
-                .then(() => {
-                    console.log('Video playback started');
-                    // Check if video is actually playing
-                    setTimeout(() => {
-                        if (video.paused || video.readyState < 3) {
-                            console.warn('Video may not be playing correctly');
-                        }
-                    }, 1000);
-                })
-                .catch(videoErr => {
-                    console.warn('Video play failed:', videoErr);
-                });
+        // Function to setup media sources
+        async function setupMediaSources() {
+            const mediaFiles = await findMediaFiles();
 
-            audio.play()
-                .then(() => {
+            // Setup video
+            if (mediaFiles.video) {
+                const videoSource = document.createElement('source');
+                videoSource.src = mediaFiles.video;
+                videoSource.type = 'video/mp4';
+                video.appendChild(videoSource);
+                console.log('Video source set:', mediaFiles.video);
+            } else {
+                console.warn('No video file found');
+                videoFallback.style.display = 'flex';
+                showError('Video file not found. Please ensure background.mp4 is in the root directory.');
+            }
+
+            // Setup audio
+            if (mediaFiles.audio) {
+                const audioSource = document.createElement('source');
+                audioSource.src = mediaFiles.audio;
+                audioSource.type = 'audio/mpeg';
+                audio.appendChild(audioSource);
+                console.log('Audio source set:', mediaFiles.audio);
+            } else {
+                console.warn('No audio file found');
+                showError('Audio file not found. Please ensure audio.mp3 is in the root directory.');
+            }
+
+            // Setup avatar
+            if (mediaFiles.avatar) {
+                avatar.src = mediaFiles.avatar;
+                console.log('Avatar source set:', mediaFiles.avatar);
+            } else {
+                // Use a default avatar or hide the image
+                avatar.style.display = 'none';
+                console.warn('No avatar file found');
+            }
+
+            return mediaFiles;
+        }
+
+        async function playMedia() {
+            const mediaFiles = await setupMediaSources();
+            
+            // Play video if available
+            if (mediaFiles.video) {
+                try {
+                    await video.play();
+                    console.log('Video playback started');
+                    videoFallback.style.display = 'none';
+                } catch (videoErr) {
+                    console.warn('Video play failed:', videoErr);
+                    videoFallback.style.display = 'flex';
+                }
+            }
+
+            // Play audio if available
+            if (mediaFiles.audio) {
+                try {
+                    await audio.play();
                     console.log('Audio playback started');
                     icon.className = "fas fa-volume-up";
                     isPlaying = true;
-                })
-                .catch(audioErr => {
+                } catch (audioErr) {
                     console.warn('Audio autoplay blocked:', audioErr);
                     icon.className = "fas fa-volume-mute";
                     isPlaying = false;
+                    // Try to play on user interaction
                     document.body.addEventListener('click', unmuteOnInteraction, { once: true });
-                });
+                }
+            }
         }
 
         function unmuteOnInteraction() {
-            audio.play()
-                .then(() => {
-                    console.log('Audio started after user interaction');
-                    icon.className = "fas fa-volume-up";
-                    isPlaying = true;
-                })
-                .catch(err => console.error('Audio play failed after click:', err));
+            if (audio.src) {
+                audio.play()
+                    .then(() => {
+                        console.log('Audio started after user interaction');
+                        icon.className = "fas fa-volume-up";
+                        isPlaying = true;
+                    })
+                    .catch(err => console.error('Audio play failed after click:', err));
+            }
         }
 
         toggleBtn.addEventListener('click', () => {
+            if (!audio.src) {
+                showError('No audio file available');
+                return;
+            }
+
             if (isPlaying) {
                 audio.pause();
                 icon.className = "fas fa-volume-mute";
@@ -366,26 +488,40 @@
                     .catch(err => {
                         console.error('Audio play failed:', err);
                         icon.className = "fas fa-volume-mute";
+                        showError('Failed to play audio');
                     });
             }
             isPlaying = !isPlaying;
         });
 
-        video.addEventListener('error', () => {
-            console.error('Video error details:', {
-                error: video.error,
-                networkState: video.networkState,
-                readyState: video.readyState,
-                currentSrc: video.currentSrc
-            });
-            
-            const fallback = document.querySelector('.video-fallback');
-            if (fallback) fallback.style.display = 'flex';
+        // Enhanced error handling for video
+        video.addEventListener('error', (e) => {
+            console.error('Video error:', e);
+            videoFallback.style.display = 'flex';
         });
 
-        window.addEventListener('load', () => {
-            playMedia();
+        video.addEventListener('loadstart', () => {
+            console.log('Video loading started');
+        });
 
+        video.addEventListener('canplay', () => {
+            console.log('Video can start playing');
+            videoFallback.style.display = 'none';
+        });
+
+        // Enhanced error handling for audio
+        audio.addEventListener('error', (e) => {
+            console.error('Audio error:', e);
+            icon.className = "fas fa-volume-mute";
+            isPlaying = false;
+        });
+
+        // Initialize everything when page loads
+        window.addEventListener('load', async () => {
+            console.log('Page loaded, initializing media...');
+            await playMedia();
+
+            // Animated title
             let titleIndex = 0;
             const titleFrames = ["A", "Al", "Alm", "Alma", "Alma ", "Alma B", "Alma Bo", "Alma Bot"];
             const animateTitle = () => {
@@ -396,13 +532,17 @@
             animateTitle();
         });
 
-        // Regular check to ensure video stays playing
+        // Health check for video playback
         setInterval(() => {
-            if (video.readyState > 0 && video.paused && !video.ended) {
+            if (video.src && video.readyState > 0 && video.paused && !video.ended) {
                 console.warn('Video paused unexpectedly, attempting to restart');
                 video.play().catch(err => console.warn('Video restart failed:', err));
             }
         }, 3000);
+
+        // Debug information
+        console.log('Current location:', window.location);
+        console.log('Base path will be:', getBasePath());
     </script>
 </body>
 </html>
